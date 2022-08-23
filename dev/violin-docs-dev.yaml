@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: violin-docs
+  namespace: dev
+  labels:
+    app: violin-docs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: violin-docs
+  template:
+    metadata:
+      labels:
+        app: violin-docs
+    spec:
+      containers:
+      - name: violin-docs
+        image: ccr.ccs.tencentyun.com/violin/violin-docs:v1.00
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: Always
+        volumeMounts:
+          - name: localtime
+            mountPath: /etc/localtime
+          - name: doc
+            mountPath: /docsify
+      imagePullSecrets:
+        - name: dev-key
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: doc
+          hostPath:
+            path: /home/docsify
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: violin-docs-service-dev
+  namespace: dev
+spec:
+  selector:
+    app: violin-docs
+  # type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000

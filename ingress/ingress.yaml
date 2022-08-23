@@ -1,0 +1,65 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  namespace: dev
+  annotations:
+          # nginx.ingress.kubernetes.io/app-root: /
+          #  nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  defaultBackend:
+    service:
+      name: nginx-service-dev
+      port:
+        number: 80
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - www.violin-home.cn
+    secretName: dev-https-secret
+  rules:
+  - host: "www.violin-home.cn"
+    http:
+      paths:
+      - path: /assets
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service-dev
+            port:
+              number: 80
+      - path: /write
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service-dev
+            port:
+              number: 80
+      - path: /view
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service-dev
+            port:
+              number: 80
+      - path: /auth/api/v1
+        pathType: Prefix
+        backend:
+          service:
+            name: violin-book-service-dev
+            port:
+              number: 80
+      - path: /jenkins
+        pathType: Prefix
+        backend:
+          service:
+            name: service-jenkins
+            port:
+              number: 80
+      - path: /docs
+        pathType: Prefix
+        backend:
+          service:
+            name: violin-docs-service-dev
+            port:
+              number: 80
