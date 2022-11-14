@@ -19,6 +19,19 @@ I view a list that in the cluster
   名前: XiangWeiGuan
   パスワード: 別管理
 
+## ingress install
+
+    1. kubectl apply -f configMap.yaml 
+      to create userspace
+      to create serviceaccount/role/clusterrole/clusterrolebinding for ingress-controler
+    2. kubectl apply -f ingress-webhook.yaml
+      to create ingress-webhook
+      to create serviceaccount/role/clusterrole/clusterrolebinding for webhook
+    3. kubectl apply -f ingress-controller.yaml
+      to create controller
+      to create service
+      to create ingressclass 
+
 ## to view log detail
 
 to add parameter -Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true in JAVA_OPTS
