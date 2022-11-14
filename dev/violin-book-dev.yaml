@@ -16,16 +16,16 @@ spec:
         app: violin-book
     spec:
       containers:
-      - name: violin-book
-        image: ccr.ccs.tencentyun.com/violin/violin-book:v1.00
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-        volumeMounts:
-          - name: localtime
-            mountPath: /etc/localtime
-          - name: docs
-            mountPath: /home/docsify/docs/docs
+        - name: violin-book
+          image: ccr.ccs.tencentyun.com/violin/violin-book:v1.00
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+            - name: docs
+              mountPath: /home/docsify/docs/docs
       imagePullSecrets:
         - name: dev-key
       volumes:
@@ -33,8 +33,8 @@ spec:
           hostPath:
             path: /etc/localtime
         - name: docs
-          hostPath:
-            path: /home/docsify/docs/docs
+          persistentVolumeClaim:
+            claimName: violin-docs-pvc
 ---
 apiVersion: v1
 kind: Service

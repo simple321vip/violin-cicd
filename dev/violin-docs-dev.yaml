@@ -33,8 +33,8 @@ spec:
           hostPath:
             path: /etc/localtime
         - name: doc
-          hostPath:
-            path: /home/docsify
+          persistentVolumeClaim:
+            claimName: violin-docs-pvc
 ---
 apiVersion: v1
 kind: Service
