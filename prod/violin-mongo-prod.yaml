@@ -35,7 +35,7 @@ spec:
           - mountPath: /bitnami/mongodb 
             name: mongodb-volume
       imagePullSecrets:
-        - name: dev-key
+        - name: devops-secret
       volumes:
         - name: mongodb-volume
           hostPath:

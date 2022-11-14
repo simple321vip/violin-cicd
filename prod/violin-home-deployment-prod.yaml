@@ -25,7 +25,7 @@ spec:
           - name: localtime
             mountPath: /etc/localtime
       imagePullSecrets:
-        - name: dev-key
+        - name: devops-secret
       volumes:
         - name: localtime
           hostPath:

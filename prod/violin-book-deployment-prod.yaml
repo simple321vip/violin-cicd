@@ -27,7 +27,7 @@ spec:
           - name: docs
             mountPath: /home/docsify/docs/docs
       imagePullSecrets:
-        - name: dev-key
+        - name: devops-secret
       volumes:
         - name: localtime
           hostPath:

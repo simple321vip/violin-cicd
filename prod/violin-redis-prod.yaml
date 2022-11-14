@@ -22,7 +22,7 @@ spec:
         - containerPort: 6379
         imagePullPolicy: Always
       imagePullSecrets:
-        - name: dev-key
+        - name: devops-secret
 ---
 apiVersion: v1
 kind: Service
