@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: argocd-server
+  namespace: devops
+spec:
+  type: ExternalName
+  externalName: argocd-server.argocd.svc.cluster.local #关键配置，b空间的svc名字加上.空间名字.svc.cluster.local
+  ports:
+  - port: 80
+    targetPort: 80
