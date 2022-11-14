@@ -11,11 +11,10 @@ spec:
       name: nginx-service-dev
       port:
         number: 80
-  ingressClassName: nginx
   tls:
   - hosts:
     - www.violin-home.cn
-    secretName: dev-https-secret
+    secretName: https-secret
   rules:
   - host: "www.violin-home.cn"
     http:
