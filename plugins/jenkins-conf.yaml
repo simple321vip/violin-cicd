@@ -1,0 +1,142 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cicd-jenkins
+  labels:
+    app.kubernetes.io/name: cicd-jenkins
+    app.kubernetes.io/instance: cicd-jenkins
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jenkins-pv
+  namespace: cicd-jenkins
+  labels:
+    app: jenkins
+spec:
+  capacity:          
+    storage: 20Gi
+  accessModes:       
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  hostPath: #NFS设置
+    path: /data/kubernetes/jenkins 
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: jenkins-pvc
+  namespace: cicd-jenkins
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi			#生产环境空间一定要设置大点（经验值200G，具备扩容能力）
+  selector:
+    matchLabels:
+      app: jenkins
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins-admin       #ServiceAccount名
+  namespace: cicd-jenkins    #指定namespace，一定要修改成你自己的namespace
+  labels:
+    name: jenkins
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: jenkins-admin
+  labels:
+    name: jenkins
+subjects:
+  - kind: ServiceAccount
+    name: jenkins-admin
+    namespace: cicd-jenkins
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-jenkins
+  namespace: cicd-jenkins
+spec:
+  type: ClusterIP
+  selector:
+    app: jenkins
+  ports:
+  - port: 80
+    name: http
+    targetPort: 8080
+  - port: 32000
+    name: tcp
+    targetPort: 50000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-jenkins
+  namespace: dev
+spec:
+  type: ExternalName
+  externalName: service-jenkins.cicd-jenkins.svc.cluster.local #关键配置，b空间的svc名字加上.空间名字.svc.cluster.local
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: cicd-jenkins
+  labels:
+    app: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      nodeName: master
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+      serviceAccount: jenkins-admin
+      containers:
+      - name: jenkins
+        securityContext:
+          runAsUser: 0       #设置以ROOT用户运行容器
+          privileged: true   #拥有特权
+        image: jenkins/jenkins:lts-jdk11
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: agent
+          containerPort: 50000
+          protocol: TCP
+        env:
+          - name: "JAVA_OPTS"
+            value: "-Duser.timezone=Asia/Shanghai -Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"
+          - name: "JENKINS_OPTS"
+            value: "--prefix=/jenkins"
+        resources:
+          requests:
+            cpu: "50m"
+          limits:
+            cpu: "200m"
+        volumeMounts:                        #设置要挂在的目录
+        - name: jenkins
+          mountPath: /var/jenkins_home
+      volumes:
+      - name: jenkins
+        persistentVolumeClaim:
+          claimName: jenkins-pvc
