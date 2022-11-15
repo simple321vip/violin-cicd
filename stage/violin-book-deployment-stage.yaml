@@ -1,51 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: violin-docs
+  name: violin-book
   namespace: devops
   labels:
-    app: violin-docs
+    app: violin-book
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: violin-docs
+      app: violin-book
   template:
     metadata:
       labels:
-        app: violin-docs
+        app: violin-book
     spec:
       containers:
-      - name: violin-docs
-        image: ccr.ccs.tencentyun.com/violin/violin-docs:v1.00
-        ports:
-        - containerPort: 3000
+      - name: violin-book
+        image: ccr.ccs.tencentyun.com/violin/violin-book:v1.00
         imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
         volumeMounts:
           - name: localtime
             mountPath: /etc/localtime
-          - name: doc
-            mountPath: /docsify/docs/docs
+          - name: docs
+            mountPath: /home/docsify/docs/docs
       imagePullSecrets:
         - name: devops-secret
       volumes:
         - name: localtime
           hostPath:
             path: /etc/localtime
-        - name: doc
+        - name: docs
           persistentVolumeClaim:
             claimName: violin-docs-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: violin-docs-service-dev
-  namespace: devops
-spec:
-  selector:
-    app: violin-docs
-  # type: NodePort
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 3000
