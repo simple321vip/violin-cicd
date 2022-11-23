@@ -25,7 +25,7 @@ spec:
           - name: localtime
             mountPath: /etc/localtime
           - name: docs
-            mountPath: /home/docsify/docs/docs
+            mountPath: /docsify/docs/
       imagePullSecrets:
         - name: devops-secret
       volumes:
