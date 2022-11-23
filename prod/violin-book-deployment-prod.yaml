@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: violin-book
-        image: ccr.ccs.tencentyun.com/violin/violin-book:v1.00
+        image: ccr.ccs.tencentyun.com/violin/violin-book:v1.01
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
