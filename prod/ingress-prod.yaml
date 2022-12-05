@@ -47,11 +47,32 @@ spec:
             name: nginx-service-dev
             port:
               number: 80
-      - path: /auth/api/v1
+      - path: /auth
         pathType: Prefix
         backend:
           service:
-            name: violin-book-service-dev
+            name: violin-auth-service-dev
+            port:
+              number: 80
+      - path: /wiki
+        pathType: Prefix
+        backend:
+          service:
+            name: violin-wiki-service-dev
+            port:
+              number: 80
+      - path: /bookmark
+        pathType: Prefix
+        backend:
+          service:
+            name: violin-bookmark-service-dev
+            port:
+              number: 80
+      - path: /onenote
+        pathType: Prefix
+        backend:
+          service:
+            name: violin-onenote-service-dev
             port:
               number: 80
       - path: /jenkins

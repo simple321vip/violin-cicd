@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: violin-auth
+  namespace: devops
+  labels:
+    app: violin-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: violin-auth
+  template:
+    metadata:
+      labels:
+        app: violin-auth
+    spec:
+      containers:
+      - name: violin-auth
+        image: ccr.ccs.tencentyun.com/violin/violin-auth:v1.02
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - name: localtime
+            mountPath: /etc/localtime
+      imagePullSecrets:
+        - name: devops-secret
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime

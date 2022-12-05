@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: violin-book
+  name: violin-wiki
   namespace: devops
   labels:
-    app: violin-book
+    app: violin-wiki
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: violin-book
+      app: violin-wiki
   template:
     metadata:
       labels:
-        app: violin-book
+        app: violin-wiki
     spec:
       containers:
-      - name: violin-book
-        image: ccr.ccs.tencentyun.com/violin/violin-book:v1.02
+      - name: violin-wiki
+        image: ccr.ccs.tencentyun.com/violin/violin-wiki:v1.02
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

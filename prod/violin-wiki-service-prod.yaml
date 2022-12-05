@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: violin-wiki-service-dev
+  namespace: devops
+spec:
+  selector:
+    app: violin-wiki
+  # type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

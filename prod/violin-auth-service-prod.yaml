@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: violin-book-service-dev
+  name: violin-auth-service-dev
   namespace: devops
 spec:
   selector:
-    app: violin-book
+    app: violin-auth
   # type: NodePort
   ports:
     - protocol: TCP

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: violin-onenote
+  namespace: devops
+  labels:
+    app: violin-onenote
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: violin-onenote
+  template:
+    metadata:
+      labels:
+        app: violin-onenote
+    spec:
+      containers:
+      - name: violin-onenote
+        image: ccr.ccs.tencentyun.com/violin/violin-onenote:v1.02
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - name: localtime
+            mountPath: /etc/localtime
+      imagePullSecrets:
+        - name: devops-secret
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
