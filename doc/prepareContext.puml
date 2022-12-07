@@ -1,0 +1,29 @@
+@startuml test
+
+entity SpringApplication
+control prepareContext
+entity context
+control postProcessApplicationContext
+entity ConfigurableListableBeanFactory
+entity AnnotationConfigServletWebServerApplicationContext
+
+
+
+activate SpringApplication
+SpringApplication -> prepareContext: bootstrapContext, context, environment, listeners, applicationArguments, printedBanner
+activate prepareContext
+prepareContext -> context
+activate context
+context -> context: setEnvironment(environment)
+context -> prepareContext
+deactivate context
+prepareContext -> postProcessApplicationContext: (context)
+activate postProcessApplicationContext
+postProcessApplicationContext -> context: getBeanFactory
+activate context
+context -> context: getBeanFactory()
+postProcessApplicationContext -> prepareContext 
+deactivate postProcessApplicationContext
+
+
+@enduml

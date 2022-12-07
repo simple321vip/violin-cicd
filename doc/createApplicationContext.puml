@@ -1,0 +1,64 @@
+@startuml test
+
+entity SpringApplication
+control createApplicationContext
+entity AnnotationConfigServletWebServerApplicationContext
+entity GenericApplicationContext
+entity DefaultListableBeanFactory
+entity AnnotatedBeanDefinitionReader
+entity ClassPathBeanDefinitionScanner
+entity AnnotationConfigUtils
+entity RootBeanDefinition
+
+
+activate SpringApplication
+SpringApplication -> createApplicationContext
+activate createApplicationContext
+createApplicationContext -> AnnotationConfigServletWebServerApplicationContext: new
+activate AnnotationConfigServletWebServerApplicationContext
+AnnotationConfigServletWebServerApplicationContext -> GenericApplicationContext: new
+note right
+create instance
+end note
+activate GenericApplicationContext
+GenericApplicationContext -> DefaultListableBeanFactory: new
+note right
+create instance
+end note
+activate DefaultListableBeanFactory
+DefaultListableBeanFactory -> GenericApplicationContext: beanFactory
+deactivate DefaultListableBeanFactory
+GenericApplicationContext -> AnnotationConfigServletWebServerApplicationContext: registry
+deactivate GenericApplicationContext
+AnnotationConfigServletWebServerApplicationContext -> AnnotatedBeanDefinitionReader: new(registry)
+activate AnnotatedBeanDefinitionReader
+AnnotatedBeanDefinitionReader -> AnnotationConfigUtils: registerAnnotationConfigProcessorsz(registry)
+activate AnnotationConfigUtils
+loop
+  AnnotationConfigUtils -> RootBeanDefinition: new(.class)
+  activate RootBeanDefinition
+  note right
+  create instance
+  end note
+  RootBeanDefinition -> AnnotationConfigUtils: definition
+  deactivate RootBeanDefinition
+  AnnotationConfigUtils -> AnnotationConfigUtils: registerPostProcessor(registry, definition, beanName)
+end
+AnnotationConfigUtils -> AnnotatedBeanDefinitionReader
+deactivate AnnotationConfigUtils
+
+AnnotatedBeanDefinitionReader -> AnnotationConfigServletWebServerApplicationContext: reader
+deactivate AnnotatedBeanDefinitionReader
+AnnotationConfigServletWebServerApplicationContext -> ClassPathBeanDefinitionScanner: new(registry)
+activate ClassPathBeanDefinitionScanner
+note right
+create instance
+end note
+ClassPathBeanDefinitionScanner -> AnnotationConfigServletWebServerApplicationContext: scanner
+deactivate ClassPathBeanDefinitionScanner
+AnnotationConfigServletWebServerApplicationContext -> createApplicationContext: context
+deactivate AnnotationConfigServletWebServerApplicationContext
+createApplicationContext -> SpringApplication: context
+deactivate createApplicationContext
+
+@enduml
