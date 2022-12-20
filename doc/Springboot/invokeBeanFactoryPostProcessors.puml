@@ -1,0 +1,89 @@
+@startuml test
+
+entity context << AbstractApplicationContext >>
+entity Delegate1 << PostProcessorRegistrationDelegate >>
+entity Delegate2 << PostProcessorRegistrationDelegate >>
+entity postProcessor << BeanFactoryPostProcessor >>
+entity parser << ConfigurationClassParser >>
+entity annotationParser << ComponentScanAnnotationParser >>
+entity scanner << ClassPathBeanDefinitionScanner >>
+entity definitionHolder << BeanDefinitionHolder >>
+  
+autonumber
+activate context
+note right context #aqua
+invokeBeanFactoryPostProcessors
+(beanFactory)
+end note
+
+
+context -> Delegate1: invoke
+note right #aqua
+invokeBeanFactoryPostProcessors
+(beanFactory, beanFactoryPostProcessors)
+end note
+
+activate Delegate1
+
+loop
+Delegate1 -> Delegate2: invokeBeanFactoryPostProcessors(registryProcessors, beanFactory)
+note right
+5 kinds of BeanFactoryPostProcessors
+registryProcessors,
+regularPostProcessors,
+priorityOrderedPostProcessors,
+orderedPostProcessors,
+nonOrderedPostProcessors
+end note
+
+activate Delegate2
+loop
+  Delegate2 -> postProcessor: postProcessBeanFactory(beanFactory) 
+  activate postProcessor
+  note right 
+  ConfigurationClassPostProcessor
+  end note
+  postProcessor -> postProcessor: processConfigBeanDefinitions(beanFactory)
+  
+    postProcessor -> parser: parse(candidates)
+    activate parser
+      
+      parser -> parser: processConfigurationClass
+      parser -> parser: doProcessConfigurationClass
+      parser -> annotationParser: parse(componentScan, declaringClass)
+      activate annotationParser
+      
+      annotationParser -> scanner: new(registry, environment, resourceLoader) 
+      activate scanner
+      scanner -> scanner: doScan(basePackages): beanDefinitions
+      scanner -> scanner: findCandidateComponents(basePackage)
+
+      loop
+        scanner -> definitionHolder: new(candidate, beanName)
+        activate definitionHolder
+        definitionHolder -> scanner: definitionHolder
+        deactivate  definitionHolder
+        scanner -> scanner: registerBeanDefinition(definitionHolder)
+      end
+
+      scanner -> annotationParser: beanDefinitions
+      deactivate scanner
+
+      annotationParser -> parser
+      deactivate annotationParser
+    parser -> postProcessor
+    deactivate parser
+
+  postProcessor -> Delegate2
+  deactivate postProcessor
+
+end
+
+Delegate2 -> Delegate1
+deactivate Delegate2
+end
+
+Delegate1 -> context
+deactivate Delegate1
+
+@enduml

@@ -1,0 +1,62 @@
+@startuml test
+
+entity BeanFactory
+
+BeanFactory -> preInstantiateSingletons
+activate preInstantiateSingletons
+
+loop
+  preInstantiateSingletons -> getBean: (beanName)
+  activate getBean
+    getBean -> doGetBean: (beanName)
+    activate doGetBean
+      entity RootBeanDefinition
+      doGetBean -> RootBeanDefinition: getMergedLocalBeanDefinition(beanName)
+      activate RootBeanDefinition
+      RootBeanDefinition -> doGetBean: mbd
+      deactivate RootBeanDefinition
+        
+      alt mbd.getDependsOn != null
+        loop for depend in dependsOn
+          doGetBean -> registerDependentBean
+          activate registerDependentBean
+          registerDependentBean -> doGetBean
+          deactivate registerDependentBean
+        end
+      end
+
+      alt mbd.isSingleton == true
+        doGetBean -> createBean: (beanName, mbd)
+        activate createBean
+        createBean -> doCreateBean: (beanName, mbd)
+        activate doCreateBean
+          doCreateBean -> populateBean: (beanName, mbd)
+          activate populateBean
+          populateBean -> doCreateBean
+          deactivate populateBean
+
+          
+          doCreateBean -> initializeBean: (beanName, mbd)
+          activate initializeBean
+          initializeBean -> doCreateBean
+          deactivate initializeBean
+        doCreateBean -> createBean: instance
+        deactivate doCreateBean
+        createBean -> doGetBean: instance
+        deactivate createBean
+        
+        doGetBean -> getSingleton: (beanName, beanInstance)
+        activate getSingleton
+        getSingleton -> doGetBean: beanInstance
+        deactivate getSingleton
+      end
+    doGetBean -> getBean
+    deactivate doGetBean
+  getBean -> preInstantiateSingletons
+  deactivate getBean
+end 
+
+preInstantiateSingletons -> BeanFactory
+deactivate preInstantiateSingletons
+
+@enduml
