@@ -1,0 +1,92 @@
+@startuml flow
+
+entity BeanFactory
+control preInstantiateSingletons
+
+activate BeanFactory
+BeanFactory -> preInstantiateSingletons
+activate preInstantiateSingletons
+loop
+
+  preInstantiateSingletons -> getBean: (beanName)
+  activate getBean
+  alt mdb.isSingleton
+
+    getBean -> getMergedLocalBeanDefinition: (beanName)
+    activate getMergedLocalBeanDefinition
+    getMergedLocalBeanDefinition -> getBean
+    deactivate getMergedLocalBeanDefinition
+
+    alt mdb.getDependsOn
+
+    end
+    getBean -> createBean: (beanName, mdb, args)
+    activate createBean
+    createBean -> resolveBeforeInstantiation
+    activate resolveBeforeInstantiation
+    resolveBeforeInstantiation -> createBean
+    deactivate resolveBeforeInstantiation
+
+    createBean -> doCreateBean
+    activate doCreateBean
+    doCreateBean -> populateBean: (beanName, mdb)
+    activate populateBean
+    populateBean -> doCreateBean
+    deactivate populateBean
+
+    doCreateBean -> initializeBean: (beanName, exposeObject, mdb)
+    activate initializeBean
+    initializeBean -> invokeAwareMethods: (beanName, bean)
+    note right
+      BeanNameAware -> setBeanName
+      BeanClassLoaderAware -> setBeanClassLoader
+      BeanFactoryAware -> setBeanFactory
+      以上三种Aware是在initializeBean中执行的。
+      其他Aware是在BeanPostProcesser后执行的。
+    end note
+    activate invokeAwareMethods
+    invokeAwareMethods -> initializeBean
+    deactivate invokeAwareMethods
+
+    initializeBean -> applyBeanPostProcessorsBeforeInitialization: (wrappedBean, beanName)
+    note right
+      spring aop 以BeanPostProcessor的形式对bean进行增强
+    end note
+    activate applyBeanPostProcessorsBeforeInitialization
+    applyBeanPostProcessorsBeforeInitialization -> initializeBean
+    deactivate applyBeanPostProcessorsBeforeInitialization
+
+    initializeBean -> invokeInitMethods: (beanName, wrappedBean, mbd)
+    note right
+      When the class implements InitializingBean
+      都会调用afterPropertiesSet方法
+    end note
+    activate invokeInitMethods
+    invokeInitMethods -> initializeBean
+    deactivate invokeInitMethods
+
+   initializeBean -> applyBeanPostProcessorsAfterInitialization: (wrappedBean, beanName)
+    note right
+      spring aop 以BeanPostProcessor的形式对bean进行增强
+    end note
+    activate applyBeanPostProcessorsAfterInitialization
+    applyBeanPostProcessorsAfterInitialization -> initializeBean
+    deactivate applyBeanPostProcessorsAfterInitialization
+
+
+    initializeBean -> doCreateBean
+    deactivate initializeBean
+    doCreateBean -> createBean
+    deactivate doCreateBean
+    createBean -> getBean
+    deactivate createBean
+  end
+
+  getBean -> preInstantiateSingletons
+  deactivate getBean
+
+end
+preInstantiateSingletons -> BeanFactory
+deactivate preInstantiateSingletons
+
+@enduml
