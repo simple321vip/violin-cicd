@@ -96,3 +96,10 @@ spec:
             name: argocd-server
             port:
               number: 80
+      - path: /trader
+        pathType: Prefix
+        backend:
+          service:
+            name: violin-trade-service-prod
+            port:
+              number: 80
