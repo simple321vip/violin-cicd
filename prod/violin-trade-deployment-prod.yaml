@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: violin-trade
+  namespace: devops
+  labels:
+    app: violin-trade
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: violin-trade
+  template:
+    metadata:
+      labels:
+        app: violin-trade
+    spec:
+      containers:
+      - name: violin-trade
+        image: ccr.ccs.tencentyun.com/violin/violin-trade:v1.00
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - name: localtime
+            mountPath: /etc/localtime
+          - name: trade
+            mountPath: /violin/strategy
+      imagePullSecrets:
+        - name: devops-secret
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: trade
+          persistentVolumeClaim:
+            claimName: violin-trade-pvc
