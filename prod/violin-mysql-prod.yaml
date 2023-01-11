@@ -4,8 +4,13 @@ metadata:
   name: mysql-cnf
   namespace: devops
 data:
+  # find -name mysql.sock to find location
+  # tcp ->  mysql -uroot -h 127.0.0.1 -p
+  # socket -> mysql -uroot -p
   mysqld.cnf: |
     [mysqld]
+    socket = /var/lib/mysql/mysql.sock
+    datadir = /data/mysql
     performance_schema_max_table_instances = 400
     table_definition_cache = 400
     table_open_cache = 256
@@ -14,6 +19,7 @@ data:
     skip-name-resolve
     [client]
     default_character_set = utf8
+    socket = /var/lib/mysql/mysql.sock
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -27,7 +33,7 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 2Gi
+      storage: 5Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -71,9 +77,9 @@ spec:
             cpu: "200m"
         volumeMounts: 
           - name: mysql-config
-            mountPath: "/etc/mysql/mysql.conf.d/"
+            mountPath: "/etc/mysql/conf.d/"
           - name: mysql-pvc
-            mountPath: "/var/lib/mysql"
+            mountPath: "/data/mysql"
       volumes:
         - name: mysql-config
           configMap:
