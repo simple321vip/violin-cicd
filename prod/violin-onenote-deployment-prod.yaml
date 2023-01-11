@@ -20,7 +20,7 @@ spec:
         image: ccr.ccs.tencentyun.com/violin/violin-onenote:v1.02
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+        - containerPort: 8083
         volumeMounts:
           - name: localtime
             mountPath: /etc/localtime
