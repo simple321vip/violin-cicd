@@ -1,0 +1,97 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: mysql-cnf
+  namespace: devops
+data:
+  mysqld.cnf: |
+    [mysqld]
+    performance_schema_max_table_instances = 400
+    table_definition_cache = 400
+    table_open_cache = 256
+    performance_schema = off
+    skip-host-cache
+    skip-name-resolve
+    [client]
+    default_character_set = utf8
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: violin-mysql-pvc
+  namespace: devops
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: violin-mysql-deployment
+  namespace: devops
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      nodeName: master
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+      imagePullSecrets:
+        - name: devops-secret
+      containers:
+      - name: violin-mysql
+        image: mysql:latest
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "123456"
+        - name: MYSQL_DATABASE
+          value: "violin"
+        ports:
+        - containerPort: 3306
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "200m"
+        volumeMounts: 
+          - name: mysql-config
+            mountPath: "/etc/mysql/mysql.conf.d/"
+          - name: mysql-pvc
+            mountPath: "/var/lib/mysql"
+      volumes:
+        - name: mysql-config
+          configMap:
+            name: mysql-cnf
+        - name: mysql-pvc
+          persistentVolumeClaim:
+            claimName: violin-mysql-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: violin-mysql
+  namespace: devops
+spec:
+  type: ClusterIP
+  selector:
+    app: violin-mysql
+  ports:
+  - port: 3306
+    targetPort: 3306
+

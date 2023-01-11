@@ -59,7 +59,7 @@
 
 #### 3.1 run a mysql server.
 
-    docker run --name violin-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 MYSQL_DATABASE=violin -d mysql:latest
+    docker run --name violin-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:latest
 
 #### 3.2 enter the mysql env.
 
