@@ -41,21 +41,18 @@ metadata:
   name: violin-mysql-deployment
   namespace: devops
   labels:
-    app: mysql
+    app: violin-mysql
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: violin-mysql
   template:
     metadata:
       labels:
-        app: mysql
+        app: violin-mysql
     spec:
-      nodeName: master
-      tolerations:
-      - key: node-role.kubernetes.io/master
-        operator: Exists
+      nodeName: node1
       imagePullSecrets:
         - name: devops-secret
       containers:
