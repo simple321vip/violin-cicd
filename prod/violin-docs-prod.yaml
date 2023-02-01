@@ -6,6 +6,7 @@ metadata:
   labels:
     app: violin-docs
     project: docs
+    tagUpdateTime: T1675271598
 spec:
   replicas: 1
   selector:
@@ -17,22 +18,29 @@ spec:
         app: violin-docs
     spec:
       containers:
-      - name: violin-docs
-        image: ccr.ccs.tencentyun.com/violin/violin-docs:v1.00
-        args:
-          - /bin/sh
-          - -c
-          - > 
-            cp /docsify_data/* /docsify/docs/ ;
-            docsify serve ./docs;
-        ports:
-        - containerPort: 3000
-        imagePullPolicy: Always
-        volumeMounts:
-          - name: localtime
-            mountPath: /etc/localtime
-          - name: doc
-            mountPath: /docsify/docs/
+        - name: violin-docs
+          image: ccr.ccs.tencentyun.com/violin/violin-docs:v1.00
+          args:
+            - /bin/sh
+            - -c
+            - >
+              cp /docsify_data/* /docsify/docs/ ;
+              docsify serve ./docs;
+          resources:
+            requests:
+              cpu: 50m
+              memory: 100Mi
+            limits:
+              cpu: 60m
+              memory: 150Mi
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+            - name: doc
+              mountPath: /docsify/docs/
       imagePullSecrets:
         - name: devops-secret
       volumes:
@@ -42,3 +50,17 @@ spec:
         - name: doc
           persistentVolumeClaim:
             claimName: violin-docs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: violin-docs-service-prod
+  namespace: devops
+spec:
+  selector:
+    app: violin-docs
+  # type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000

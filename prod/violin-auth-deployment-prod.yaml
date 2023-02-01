@@ -5,6 +5,7 @@ metadata:
   namespace: devops
   labels:
     app: violin-auth
+    tagUpdateTime: T1675271598
 spec:
   replicas: 1
   selector:
@@ -16,14 +17,23 @@ spec:
         app: violin-auth
     spec:
       containers:
-      - name: violin-auth
-        image: ccr.ccs.tencentyun.com/violin/violin-auth:v1.02
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-        volumeMounts:
-          - name: localtime
-            mountPath: /etc/localtime
+        - name: violin-auth
+          image: ccr.ccs.tencentyun.com/violin/violin-auth:v1.03
+          imagePullPolicy: Always
+          args:
+            - "--spring.profiles.active=prod"
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+          resources:
+            requests:
+              cpu: 50m
+              memory: 200Mi
+            limits:
+              cpu: 100m
+              memory: 300Mi
       imagePullSecrets:
         - name: devops-secret
       volumes:

@@ -8,98 +8,98 @@ metadata:
 spec:
   defaultBackend:
     service:
-      name: nginx-service-dev
+      name: nginx-service-prod
       port:
         number: 80
   tls:
-  - hosts:
-    - www.violin-home.cn
-    secretName: https-secret
+    - hosts:
+        - www.violin-home.cn
+      secretName: https-secret
   rules:
-  - host: "www.violin-home.cn"
-    http:
-      paths:
-      - path: /assets
-        pathType: Prefix
-        backend:
-          service:
-            name: nginx-service-dev
-            port:
-              number: 80
-      - path: /write
-        pathType: Prefix
-        backend:
-          service:
-            name: nginx-service-dev
-            port:
-              number: 80
-      - path: /home
-        pathType: Prefix
-        backend:
-          service:
-            name: nginx-service-dev
-            port:
-              number: 80
-      - path: /view
-        pathType: Prefix
-        backend:
-          service:
-            name: nginx-service-dev
-            port:
-              number: 80
-      - path: /auth
-        pathType: Prefix
-        backend:
-          service:
-            name: violin-auth-service-dev
-            port:
-              number: 80
-      - path: /wiki
-        pathType: Prefix
-        backend:
-          service:
-            name: violin-wiki-service-dev
-            port:
-              number: 80
-      - path: /bookmark
-        pathType: Prefix
-        backend:
-          service:
-            name: violin-bookmark-service-dev
-            port:
-              number: 80
-      - path: /onenote
-        pathType: Prefix
-        backend:
-          service:
-            name: violin-onenote-service-dev
-            port:
-              number: 80
-      - path: /jenkins
-        pathType: Prefix
-        backend:
-          service:
-            name: service-jenkins
-            port:
-              number: 80
-      - path: /docs
-        pathType: Prefix
-        backend:
-          service:
-            name: violin-docs-service-dev
-            port:
-              number: 80
-      - path: /argo-cd
-        pathType: Prefix
-        backend:
-          service:
-            name: argocd-server
-            port:
-              number: 80
-      - path: /trader
-        pathType: Prefix
-        backend:
-          service:
-            name: violin-trade-service-prod
-            port:
-              number: 80
+    - host: "www.violin-home.cn"
+      http:
+        paths:
+          - path: /assets
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service-prod
+                port:
+                  number: 80
+          - path: /write
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service-prod
+                port:
+                  number: 80
+          - path: /home
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service-prod
+                port:
+                  number: 80
+          - path: /view
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service-prod
+                port:
+                  number: 80
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: violin-auth-service-prod
+                port:
+                  number: 80
+          - path: /wiki
+            pathType: Prefix
+            backend:
+              service:
+                name: violin-wiki-service-prod
+                port:
+                  number: 80
+          - path: /bookmark
+            pathType: Prefix
+            backend:
+              service:
+                name: violin-bookmark-service-prod
+                port:
+                  number: 80
+          - path: /onenote
+            pathType: Prefix
+            backend:
+              service:
+                name: violin-onenote-service-prod
+                port:
+                  number: 80
+          - path: /jenkins
+            pathType: Prefix
+            backend:
+              service:
+                name: service-jenkins
+                port:
+                  number: 80
+          - path: /docs
+            pathType: Prefix
+            backend:
+              service:
+                name: violin-docs-service-prod
+                port:
+                  number: 80
+          - path: /argo-cd
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 80
+          - path: /trader
+            pathType: Prefix
+            backend:
+              service:
+                name: violin-trade-service-prod
+                port:
+                  number: 80

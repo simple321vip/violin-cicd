@@ -5,6 +5,7 @@ metadata:
   namespace: devops
   labels:
     app: violin-wiki
+    tagUpdateTime: T1675271598
 spec:
   replicas: 1
   selector:
@@ -16,16 +17,25 @@ spec:
         app: violin-wiki
     spec:
       containers:
-      - name: violin-wiki
-        image: ccr.ccs.tencentyun.com/violin/violin-wiki:v1.02
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8081
-        volumeMounts:
-          - name: localtime
-            mountPath: /etc/localtime
-          - name: docs
-            mountPath: /docsify/docs/
+        - name: violin-wiki
+          image: ccr.ccs.tencentyun.com/violin/violin-wiki:v1.02
+          imagePullPolicy: Always
+          args:
+            - "--spring.profiles.active=prod"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 200Mi
+            limits:
+              cpu: 100m
+              memory: 300Mi
+          ports:
+            - containerPort: 8081
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+            - name: docs
+              mountPath: /docsify/docs/
       imagePullSecrets:
         - name: devops-secret
       volumes:

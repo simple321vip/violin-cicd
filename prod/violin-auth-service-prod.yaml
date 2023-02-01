@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: violin-auth-service-dev
+  name: violin-auth-service-prod
   namespace: devops
 spec:
   selector:

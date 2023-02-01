@@ -5,6 +5,7 @@ metadata:
   namespace: devops
   labels:
     app: violin-trade
+    tagUpdateTime: T1675271598
 spec:
   replicas: 1
   selector:
@@ -16,16 +17,23 @@ spec:
         app: violin-trade
     spec:
       containers:
-      - name: violin-trade
-        image: ccr.ccs.tencentyun.com/violin/violin-trade:v1.00
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-        volumeMounts:
-          - name: localtime
-            mountPath: /etc/localtime
-          - name: trade
-            mountPath: /violin/strategy
+        - name: violin-trade
+          image: ccr.ccs.tencentyun.com/violin/violin-trade:v1.00
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 50m
+              memory: 200Mi
+            limits:
+              cpu: 100m
+              memory: 300Mi
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+            - name: trade
+              mountPath: /violin/strategy
       imagePullSecrets:
         - name: devops-secret
       volumes:

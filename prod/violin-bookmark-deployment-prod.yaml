@@ -5,6 +5,7 @@ metadata:
   namespace: devops
   labels:
     app: violin-bookmark
+    tagUpdateTime: T1675271598
 spec:
   replicas: 1
   selector:
@@ -16,14 +17,23 @@ spec:
         app: violin-bookmark
     spec:
       containers:
-      - name: violin-bookmark
-        image: ccr.ccs.tencentyun.com/violin/violin-bookmark:v1.02
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8082
-        volumeMounts:
-          - name: localtime
-            mountPath: /etc/localtime
+        - name: violin-bookmark
+          image: ccr.ccs.tencentyun.com/violin/violin-bookmark:v1.02
+          imagePullPolicy: Always
+          args:
+            - "--spring.profiles.active=prod"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 200Mi
+            limits:
+              cpu: 100m
+              memory: 300Mi
+          ports:
+            - containerPort: 8082
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
       imagePullSecrets:
         - name: devops-secret
       volumes:

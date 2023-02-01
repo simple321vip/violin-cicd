@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: violin-bookmark-service-dev
+  name: violin-bookmark-service-prod
   namespace: devops
 spec:
   selector:

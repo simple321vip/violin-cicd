@@ -5,6 +5,7 @@ metadata:
   namespace: devops
   labels:
     app: violin-onenote
+    tagUpdateTime: T1675271598
 spec:
   replicas: 1
   selector:
@@ -16,14 +17,23 @@ spec:
         app: violin-onenote
     spec:
       containers:
-      - name: violin-onenote
-        image: ccr.ccs.tencentyun.com/violin/violin-onenote:v1.02
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8083
-        volumeMounts:
-          - name: localtime
-            mountPath: /etc/localtime
+        - name: violin-onenote
+          image: ccr.ccs.tencentyun.com/violin/violin-onenote:v1.02
+          imagePullPolicy: Always
+          args:
+            - "--spring.profiles.active=prod"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 200Mi
+            limits:
+              cpu: 100m
+              memory: 300Mi
+          ports:
+            - containerPort: 8083
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
       imagePullSecrets:
         - name: devops-secret
       volumes:
