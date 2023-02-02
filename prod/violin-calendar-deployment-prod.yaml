@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: violin-calendar
+  namespace: devops
+  labels:
+    app: violin-calendar
+    tagUpdateTime: T1675271598
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: violin-calendar
+  template:
+    metadata:
+      labels:
+        app: violin-calendar
+    spec:
+      containers:
+        - name: violin-calendar
+          image: ccr.ccs.tencentyun.com/violin/violin-calendar:v1.02
+          imagePullPolicy: Always
+          args:
+            - "--spring.profiles.active=prod"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 200Mi
+            limits:
+              cpu: 100m
+              memory: 300Mi
+          ports:
+            - containerPort: 8082
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+      imagePullSecrets:
+        - name: devops-secret
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
