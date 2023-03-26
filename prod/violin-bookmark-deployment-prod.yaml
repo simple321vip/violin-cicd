@@ -5,7 +5,7 @@ metadata:
   namespace: devops
   labels:
     app: violin-bookmark
-    tagUpdateTime: T1675271598
+    tagUpdateTime: T1675303624
 spec:
   replicas: 1
   selector:
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: violin-bookmark
-          image: ccr.ccs.tencentyun.com/violin/violin-bookmark:v1.02
+          image: ccr.ccs.tencentyun.com/violin/violin-bookmark:1.1.2
           imagePullPolicy: Always
           args:
             - "--spring.profiles.active=prod"
