@@ -5,7 +5,7 @@ metadata:
   namespace: devops
   labels:
     app: violin-auth
-    tagUpdateTime: T1675271598
+    tagUpdateTime: 1675689742
 spec:
   replicas: 1
   selector:
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: violin-auth
-          image: ccr.ccs.tencentyun.com/violin/violin-auth:1.1.3
+          image: ccr.ccs.tencentyun.com/violin/violin-auth:1.1.4
           imagePullPolicy: Always
           args:
             - "--spring.profiles.active=prod"
