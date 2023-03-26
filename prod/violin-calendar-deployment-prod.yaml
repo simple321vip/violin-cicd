@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: violin-calendar
-          image: ccr.ccs.tencentyun.com/violin/violin-calendar:1.0.0
+          image: ccr.ccs.tencentyun.com/violin/violin-calendar:1.0
           imagePullPolicy: Always
           args:
             - "--spring.profiles.active=prod"
