@@ -5,7 +5,7 @@ metadata:
   namespace: devops
   labels:
     app: violin-onenote
-    tagUpdateTime: T1675271598
+    tagUpdateTime: T1675690401
 spec:
   replicas: 1
   selector:
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: violin-onenote
-          image: ccr.ccs.tencentyun.com/violin/violin-onenote:v1.02
+          image: ccr.ccs.tencentyun.com/violin/violin-onenote:1.0.0
           imagePullPolicy: Always
           args:
             - "--spring.profiles.active=prod"
