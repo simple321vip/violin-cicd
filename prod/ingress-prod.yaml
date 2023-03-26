@@ -75,6 +75,13 @@ spec:
                 name: violin-onenote-service-prod
                 port:
                   number: 80
+          - path: /calendar
+            pathType: Prefix
+            backend:
+              service:
+                name: violin-calendar-service-prod
+                port:
+                  number: 80
           - path: /jenkins
             pathType: Prefix
             backend:
