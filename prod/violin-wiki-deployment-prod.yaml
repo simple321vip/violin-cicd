@@ -5,7 +5,7 @@ metadata:
   namespace: devops
   labels:
     app: violin-wiki
-    tagUpdateTime: T1675271598
+    tagUpdateTime: T1675275749
 spec:
   replicas: 1
   selector:
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: violin-wiki
-          image: ccr.ccs.tencentyun.com/violin/violin-wiki:v1.02
+          image: ccr.ccs.tencentyun.com/violin/violin-wiki:1.1.2
           imagePullPolicy: Always
           args:
             - "--spring.profiles.active=prod"
