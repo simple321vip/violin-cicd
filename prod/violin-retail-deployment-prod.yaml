@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: violin-retail
+  namespace: devops
+  labels:
+    app: violin-retail
+    tagUpdateTime: T1675690401
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: violin-retail
+  template:
+    metadata:
+      labels:
+        app: violin-retail
+    spec:
+      containers:
+        - name: violin-retail
+          image: ccr.ccs.tencentyun.com/violin/violin-retail:0.5
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 50m
+              memory: 200Mi
+            limits:
+              cpu: 100m
+              memory: 300Mi
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+            - name: application
+              mountPath: /app/config
+      imagePullSecrets:
+        - name: devops-secret
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: application
+          configMap:
+            name: retail-application
