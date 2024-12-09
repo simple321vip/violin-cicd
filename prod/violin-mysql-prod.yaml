@@ -56,27 +56,27 @@ spec:
       imagePullSecrets:
         - name: devops-secret
       containers:
-      - name: violin-mysql
-        image: mysql:latest
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: "123456"
-        - name: MYSQL_DATABASE
-          value: "violin"
-        ports:
-        - containerPort: 3306
-        resources:
-          requests:
-            memory: "200Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "200m"
-        volumeMounts: 
-          - name: mysql-config
-            mountPath: "/etc/mysql/conf.d/"
-          - name: mysql-pvc
-            mountPath: "/data/mysql"
+        - name: violin-mysql
+          image: ccr.ccs.tencentyun.com/violin/violin-mysql:1.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "123456"
+            - name: MYSQL_DATABASE
+              value: "violin"
+          ports:
+            - containerPort: 3306
+          resources:
+            requests:
+              memory: "200Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "200m"
+          volumeMounts:
+            - name: mysql-config
+              mountPath: "/etc/mysql/conf.d/"
+            - name: mysql-pvc
+              mountPath: "/data/mysql"
       volumes:
         - name: mysql-config
           configMap:
@@ -95,6 +95,5 @@ spec:
   selector:
     app: violin-mysql
   ports:
-  - port: 3306
-    targetPort: 3306
-
+    - port: 3306
+      targetPort: 3306

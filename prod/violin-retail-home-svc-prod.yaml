@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: violin-retail-home-svc-prod
+  namespace: devops
+spec:
+  selector:
+    app: violin-retail-home
+  # type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

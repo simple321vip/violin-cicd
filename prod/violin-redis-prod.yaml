@@ -16,11 +16,11 @@ spec:
         app: violin-redis
     spec:
       containers:
-      - name: violin-redis
-        image: redis:6.2-alpine
-        ports:
-        - containerPort: 6379
-        imagePullPolicy: Always
+        - name: violin-redis
+          image: ccr.ccs.tencentyun.com/violin/violin-redis:1.0
+          ports:
+            - containerPort: 6379
+          imagePullPolicy: Always
       imagePullSecrets:
         - name: devops-secret
 ---
@@ -34,6 +34,5 @@ spec:
   selector:
     app: violin-redis
   ports:
-  - port: 6379
-    targetPort: 6379
-
+    - port: 6379
+      targetPort: 6379
