@@ -1,0 +1,10 @@
+FROM ccr.ccs.tencentyun.com/violin/golang:1.19.5
+
+# 创建vendor 文件夹
+RUN mkdir -p /vendor
+
+# 将vendor设置位当前路径
+WORKDIR /vendor
+
+
+

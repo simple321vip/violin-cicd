@@ -14,7 +14,7 @@ spec:
   tls:
     - hosts:
         - www.violin-home.cn
-      secretName: https-secret
+      secretName: https-ca-20241111
   rules:
     - host: "www.violin-home.cn"
       http:

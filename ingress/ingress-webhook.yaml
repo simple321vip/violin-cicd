@@ -38,6 +38,7 @@ webhooks:
 ---
 # Source: ingress-nginx/templates/admission-webhooks/job-patch/serviceaccount.yaml
 apiVersion: v1
+automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
   name: ingress-nginx-admission
@@ -119,7 +120,7 @@ metadata:
     app.kubernetes.io/component: admission-webhook
 rules:
   - apiGroups:
-      - ''
+      - ""
     resources:
       - secrets
     verbs:
@@ -207,8 +208,8 @@ spec:
         app.kubernetes.io/component: admission-webhook
     spec:
       tolerations:
-      - key: node-role.kubernetes.io/master
-        operator: Exists
+        - key: node-role.kubernetes.io/master
+          operator: Exists
       nodeName: master
       containers:
         - name: create
@@ -264,8 +265,8 @@ spec:
         app.kubernetes.io/component: admission-webhook
     spec:
       tolerations:
-      - key: node-role.kubernetes.io/master
-        operator: Exists
+        - key: node-role.kubernetes.io/master
+          operator: Exists
       nodeName: master
       containers:
         - name: patch

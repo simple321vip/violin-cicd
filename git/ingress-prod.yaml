@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gogs-ingress
+  namespace: gogs
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  defaultBackend:
+    service:
+      name: gogs-svc
+      port:
+        number: 80
+  tls:
+    - hosts:
+        - www.violin-work.online
+      secretName: www.violin-work.online
+  rules:
+    - host: "www.violin-work.online"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gogs-svc
+                port:
+                  number: 80

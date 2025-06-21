@@ -1,0 +1,73 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: gogs-server-data
+  namespace: gogs
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gogs
+  name: gogs-svc
+  namespace: gogs
+spec:
+  type: NodePort
+  ports:
+    - name: gogs
+      port: 80
+      protocol: TCP
+      targetPort: 3000
+      nodePort: 32000
+  selector:
+    app: gogs
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gogs
+  name: gogs
+  namespace: gogs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gogs
+  template:
+    metadata:
+      labels:
+        app: gogs
+    spec:
+      nodeName: master
+      containers:
+        - image: ccr.ccs.tencentyun.com/violin/gogs:latest
+          imagePullPolicy: IfNotPresent
+          name: gogs
+          resources:
+            requests:
+              cpu: 50m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 200Mi
+          volumeMounts:
+            - mountPath: /data
+              name: volv
+      imagePullSecrets:
+        - name: devops-secret
+      nodeSelector:
+        kubernetes.io/os: linux
+        kubernetes.io/hostname: master
+      volumes:
+        - name: volv
+          persistentVolumeClaim:
+            claimName: gogs-server-data

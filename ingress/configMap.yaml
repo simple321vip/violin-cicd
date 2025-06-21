@@ -4,24 +4,33 @@ metadata:
   name: ingress-nginx
   labels:
     app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx 
+    app.kubernetes.io/instance: ingress-nginx
+---
+apiVersion: v1
+data:
+  .dockerconfigjson: ewoJImF1dGhzIjogewoJCSJjY3IuY2NzLnRlbmNlbnR5dW4uY29tIjogewoJCQkiYXV0aCI6ICJNVEF3TURJME5UUXdNRE16T2sxaU9ETXlNREV3TkRnPSIKCQl9Cgl9Cn0=
+kind: Secret
+metadata:
+  name: ingress-nginx-secret
+  namespace: ingress-nginx
+type: kubernetes.io/dockerconfigjson
 ---
 # Source: ingress-nginx/templates/controller-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   labels:
-    helm.sh/chart: ingress-nginx-4.0.10
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/version: 1.1.0
-    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: 1.11.2
     app.kubernetes.io/component: controller
   name: ingress-nginx-controller
   namespace: ingress-nginx
 data:
-  allow-snippet-annotations: 'true'
-
+  allow-snippet-annotations: "true"
+  log-format: '{"timestamp": "$time_local", "remote_addr": "$remote_addr", "request": "$request", "status": $status, "body_bytes_sent": $body_bytes_sent, "http_referer": "$http_referer", "http_user_agent": "$http_user_agent", "http_x_forwarded_for": "$http_x_forwarded_for", "request_time": $request_time}'
+  access-log: "/var/log/nginx/access.log"
+  access-log-format: "json"
 ---
 # Source: ingress-nginx/templates/controller-serviceaccount.yaml
 apiVersion: v1
@@ -31,8 +40,7 @@ metadata:
     helm.sh/chart: ingress-nginx-4.0.10
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/version: 1.1.0
-    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: 1.11.2
     app.kubernetes.io/component: controller
   name: ingress-nginx
   namespace: ingress-nginx
@@ -43,15 +51,13 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    helm.sh/chart: ingress-nginx-4.0.10
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/version: 1.1.0
-    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: 1.11.2
   name: ingress-nginx
 rules:
   - apiGroups:
-      - ''
+      - ""
     resources:
       - configmaps
       - endpoints
@@ -63,13 +69,13 @@ rules:
       - list
       - watch
   - apiGroups:
-      - ''
+      - ""
     resources:
       - nodes
     verbs:
       - get
   - apiGroups:
-      - ''
+      - ""
     resources:
       - services
     verbs:
@@ -85,7 +91,7 @@ rules:
       - list
       - watch
   - apiGroups:
-      - ''
+      - ""
     resources:
       - events
     verbs:
@@ -111,11 +117,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    helm.sh/chart: ingress-nginx-4.0.10
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/version: 1.1.0
-    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: 1.11.2
   name: ingress-nginx
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -132,23 +136,21 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    helm.sh/chart: ingress-nginx-4.0.10
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/version: 1.1.0
-    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: 1.11.2
     app.kubernetes.io/component: controller
   name: ingress-nginx
   namespace: ingress-nginx
 rules:
   - apiGroups:
-      - ''
+      - ""
     resources:
       - namespaces
     verbs:
       - get
   - apiGroups:
-      - ''
+      - ""
     resources:
       - configmaps
       - pods
@@ -159,7 +161,7 @@ rules:
       - list
       - watch
   - apiGroups:
-      - ''
+      - ""
     resources:
       - services
     verbs:
@@ -189,7 +191,7 @@ rules:
       - list
       - watch
   - apiGroups:
-      - ''
+      - ""
     resources:
       - configmaps
     resourceNames:
@@ -198,13 +200,13 @@ rules:
       - get
       - update
   - apiGroups:
-      - ''
+      - ""
     resources:
       - configmaps
     verbs:
       - create
   - apiGroups:
-      - ''
+      - ""
     resources:
       - events
     verbs:
@@ -216,11 +218,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    helm.sh/chart: ingress-nginx-4.0.10
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/version: 1.1.0
-    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: 1.11.2
     app.kubernetes.io/component: controller
   name: ingress-nginx
   namespace: ingress-nginx

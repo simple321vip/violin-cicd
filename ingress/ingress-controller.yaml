@@ -30,11 +30,13 @@ spec:
       hostNetwork: true
       nodeName: master
       tolerations:
-      - key: node-role.kubernetes.io/master
-        operator: Exists
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+      imagePullSecrets:
+        - name: flannel-image-secret
       containers:
         - name: controller
-          image: k8s.gcr.io/ingress-nginx/controller:v1.1.0
+          image: ccr.ccs.tencentyun.com/ingress-nginx/controller:v1.11.2
           imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
@@ -107,6 +109,9 @@ spec:
               mountPath: /etc/localtime
           resources:
             requests:
+              cpu: 100m
+              memory: 90Mi
+            limits:
               cpu: 100m
               memory: 90Mi
       nodeSelector:

@@ -1,0 +1,142 @@
+---
+# postgres-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-conf
+  namespace: devops
+data:
+  pg_hba.conf: |
+    host    all     all         0.0.0.0/0 scram-sha-256
+    local   all     postgres    trust
+  postgresql.conf: |
+    listen_addresses = '*'
+---
+# service-postgres.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: devops
+spec:
+  type: NodePort
+  selector:
+    app: postgres-db
+  ports:
+    - protocol: TCP
+      port: 5432 # 服务暴露端口
+      targetPort: 5432 # 容器实际端口
+      nodePort: 30432
+      #type: ClusterIP # 推荐数据库使用 ClusterIP
+---
+# deployment-postgres.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  namespace: devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-db
+  template:
+    metadata:
+      labels:
+        app: postgres-db
+    spec:
+      initContainers:
+        - name: init-db
+          image: ccr.ccs.tencentyun.com/violin/postgres:16.3
+          securityContext:
+            runAsUser: 0
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p /var/lib/postgresql/data/pgdata
+              chown -R postgres:postgres /var/lib/postgresql/data/pgdata
+              chmod 0700 /var/lib/postgresql/data/pgdata
+              su postgres -c "initdb -D /var/lib/postgresql/data/pgdata"
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+      containers:
+        - name: postgres-container
+          image: ccr.ccs.tencentyun.com/violin/postgres:16.3
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-c"]
+          args:
+            - "postgres"
+          ports:
+            - containerPort: 5432
+          env:
+            #   - name: POSTGRES_PASSWORD
+            #     valueFrom:
+            #       secretKeyRef:
+            #         name: postgres-secret
+            #         key: password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "pg_isready -U postgres" # 使用 PostgreSQL 原生健康检查命令
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "pg_isready -U postgres" # 就绪检查使用相同命令
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          securityContext:
+            runAsUser: 70 # 强制以 postgres 用户运行
+            runAsGroup: 70
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+            - name: postgres-conf
+              mountPath: /var/lib/postgresql/data/pgdata/pg_hba.conf
+              subPath: pg_hba.conf
+            - name: postgres-conf
+              mountPath: /var/lib/postgresql/data/pgdata/postgresql.conf
+              subPath: postgresql.conf
+      nodeName: master
+      imagePullSecrets:
+        - name: devops-secret
+      volumes:
+        - name: postgres-conf
+          configMap:
+            name: postgres-conf
+        - name: postgres-data
+          # persistentVolumeClaim:
+          #   claimName: postgres-pvc
+          hostPath:
+            path: /usr/local/kubernetes/postgres_data
+            type: DirectoryOrCreate
+# ---
+# kind: PersistentVolumeClaim
+# apiVersion: v1
+# metadata:
+#   name: postgres-pvc
+#   namespace: devops
+#   annotations:
+#     volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+# spec:
+#   accessModes:
+#     - ReadWriteMany
+#   resources:
+#     requests:
+#       storage: 5Gi
