@@ -26,8 +26,7 @@ spec:
     - protocol: TCP
       port: 5432 # 服务暴露端口
       targetPort: 5432 # 容器实际端口
-      nodePort: 30432
-      #type: ClusterIP # 推荐数据库使用 ClusterIP
+      nodePort: 32432
 ---
 # deployment-postgres.yaml
 apiVersion: apps/v1
@@ -45,6 +44,7 @@ spec:
       labels:
         app: postgres-db
     spec:
+      nodeName: worker1
       initContainers:
         - name: init-db
           image: ccr.ccs.tencentyun.com/violin/postgres:16.3
@@ -113,7 +113,6 @@ spec:
             - name: postgres-conf
               mountPath: /var/lib/postgresql/data/pgdata/postgresql.conf
               subPath: postgresql.conf
-      nodeName: master
       imagePullSecrets:
         - name: devops-secret
       volumes:

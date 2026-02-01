@@ -1,0 +1,9 @@
+# 开发环境配置，继承默认配置并覆盖需要修改的部分
+app:
+  namespace: dev
+
+deployment:
+  replicas: 1
+
+container:
+  image: ccr.ccs.tencentyun.com/violin/violin-home:1.4

@@ -1,0 +1,42 @@
+# 应用基本配置
+app:
+  name: violin-web-frontend
+  labels:
+    app: nginx
+
+# 部署配置
+deployment:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+
+# 容器配置
+container:
+  name: violin-web-frontend
+  image: ccr.ccs.tencentyun.com/violin/violin-home:1.4
+  imagePullPolicy: Always
+  ports:
+    - containerPort: 8080
+  resources:
+    requests:
+      cpu: 50m
+      memory: 100Mi
+    limits:
+      cpu: 100m
+      memory: 150Mi
+
+# 卷挂载配置
+volumeMounts:
+  - name: localtime
+    mountPath: /etc/localtime
+
+# 镜像拉取密钥
+imagePullSecrets:
+  - name: devops-secret
+
+# 卷配置
+volumes:
+  - name: localtime
+    hostPath:
+      path: /etc/localtime

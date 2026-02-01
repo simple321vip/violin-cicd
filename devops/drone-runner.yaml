@@ -61,7 +61,7 @@ spec:
       hostNetwork: true
       containers:
         - name: drone-runner
-          image: crpi-ktn0pod7hv5m0nmv.cn-beijing.personal.cr.aliyuncs.com/violin-home/drone-runner-kube:latest
+          image: ccr.ccs.tencentyun.com/violin/drone-runner-kube:latest
           ports:
             - containerPort: 3000
           resources:
@@ -73,11 +73,11 @@ spec:
               memory: 200Mi
           env:
             - name: DRONE_RPC_HOST
-              value: www.violin-work.online
+              value: drone.drone.svc.cluster.local
             - name: DRONE_RPC_PROTO
-              value: https
+              value: http
             - name: DRONE_RPC_SECRET
-              value: qawsedrftg # Drone Server部署时候填写的secret
+              value: qwertyuiop # Drone Server部署时候填写的secret
             - name: DRONE_IMAGE_CLONE
               value: ccr.ccs.tencentyun.com/violin/drone-git:latest
             - name: DRONE_IMAGE_PLACEHOLDER
@@ -99,4 +99,4 @@ spec:
             path: /root/.kube/
             type: DirectoryOrCreate
       imagePullSecrets:
-        - name: aliyun-registry-secret
+        - name: tencentyun-secret
